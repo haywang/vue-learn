@@ -4,12 +4,14 @@ class Dep{
 	}
 
 	addSub(sub){
+		console.log("Dep:addSub")
 		this.subs.push(sub);
 	}
 
 	notify(){
+		console.log("Dep:notify")
 		this.subs.forEach((sub)=>{
-			sub.update()
+			sub.update();
 		})
 	}
 }
@@ -24,8 +26,6 @@ class Watcher{
 	}
 }
 
-Dep.target = null;
-
 function defineReactive(obj, key, val){
 	const dep = new Dep();
 
@@ -33,13 +33,25 @@ function defineReactive(obj, key, val){
 		enumerable: true,
 		configurable: true,
 		get: function reactiveGetter(){
+			console.log("defineReactive: get")
 			dep.addSub(Dep.target);
 			return val;
 		},
 		set: function reactiveSetter (newVal){
+			console.log("defineReactive: set")
 			if(newVal === val) return;
 			dep.notify();
 		}
+	});
+}
+
+function observer(value){
+	if(!value || (typeof value !=='object')){
+		return;
+	}
+
+	Object.keys(value).forEach((key) => {
+		defineReactive(value, key, value[key]);
 	});
 }
 
@@ -51,3 +63,13 @@ class Vue{
 		console.log('render~', this._data.test)
 	}
 }
+
+let o = new Vue({
+	data: {
+		test: "I am test"
+	}
+})
+
+o._data.test = "hello test"
+
+Dep.target = null;

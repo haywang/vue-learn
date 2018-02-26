@@ -7,10 +7,12 @@ function defineReactive(obj, key, val){
 		enumerable: true,
 		configurable: true,
 		get: function reactiveGetter(){
+			console.log("data get!");
 			return val;
 		},
 		set: function reactiveSetter(newVal){
 			if(newVal === val) return;
+			console.log("data set");
 			cb(newVal);
 		}
 	})
@@ -21,9 +23,9 @@ function observer(value){
 		return;
 	}
 
-	Object.keys(value).forEach(key)=>{
+	Object.keys(value).forEach((key) => {
 		defineReactive(value, key, value[key]);
-	};
+	});
 }
 
 class Vue{
@@ -40,3 +42,4 @@ let o = new Vue({
 })
 
 o._data.test = "hello world";
+console.log(o._data.test);
