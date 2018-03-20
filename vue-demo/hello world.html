@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<head>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+</head>
+
+<body>
+	<div id="app">
+		{{message}}
+	</div>
+	
+	<div id="app-2">
+		<span v-bind:title="message">
+			Hover your mouse over me for a few seconds to see my dynamically bound title!
+		</span>
+	</div>
+	
+	<div id="app-3">
+		<p v-if="seen">Now you see me</p>
+	</div>
+	
+	<div id="app-4">
+		<ol>
+			<li v-for="item in todos">
+				{{item.text}}
+			</li>
+		</ol>
+	</div>
+	
+	<div id="app-5">
+		<p>{{message}}</p>
+		<button v-on:click="reverseMessage">Reverse Message</buttoon>
+	</div>
+	
+	<div id="app-6">
+		<p>{{message}}</p>
+		<input v-model="message">
+	</div>
+	
+	<div id="app-7">
+		<ul>
+			<todo-item 
+				v-for="item in List"
+				v-bind:todo="item"
+				v-bind:key="item.id">
+				
+			</todo-item>
+		</ul>
+	</div>
+
+	<div id="example">
+		<p>初始message是："{{message}}"</p>
+		<p>计算后的翻转message是: "{{reversedMessage}}"</p>
+	</div>
+
+
+	<div id="example-2">
+		<simple-counter></simple-counter>
+		<simple-counter></simple-counter>
+		<simple-counter></simple-counter>
+	</div>
+
+	<div id="example-3">
+		<child my-message="hello!"></child>
+	</div>
+
+	<div id="prop-example-2">
+		<input v-model="parentMsg">
+		<br>
+		<child v-bind:my-message="parentMsg"></child>
+	</div>
+
+	<div id="counter-event-example">
+		<p>{{total}}</p>
+		<button-counter v-on:increment="incrementTotal"></button-counter>
+		<button-counter v-on:increment="incrementTotal"></button-counter>
+	</div>
+
+	<div id="message-event-example" class="demo">
+		<p v-for="msg in messages">{{msg}}</p>
+		<button-message v-on:message="handleMessage"></button-message>
+	</div>
+
+	<script>
+		var app = new Vue({
+			el:'#app',
+			data: {
+				message: 'Hello Vue!'
+			}
+		})
+		
+		var app2 = new Vue({
+			el: '#app-2',
+			data: {
+				message: 'You loaded this page on' + new Date()
+			}
+		})
+		
+		var app3 = new Vue({
+			el: '#app-3',
+			data: {
+				seen: true
+			}
+		})
+		
+		var app4 = new Vue({
+			el: '#app-4',
+			data: {
+				todos:[
+				{text: 'Learn JavaScript'},
+				{text: 'Learn Vue2'},
+				{text: 'Build something awesome'}
+				]
+			}
+		})
+		
+		var app5= new Vue({
+			el: '#app-5',
+			data: {
+				message: 'Hello Wanghao!'
+			},
+			methods: {
+				reverseMessage: function (){
+					this.message = this.message.split('').reverse().join('')
+				}
+			}
+		})
+		
+		
+		var app6 = new Vue({
+			el: '#app-6',
+			data: {
+				message: 'Hello app-6'
+			}		 
+		})
+
+		Vue.component('todo-item', {
+			 props: ['todo'],
+			template:'<li>{{todo.id}} {{todo.text}}</li>'
+		})
+
+		var app7 = new Vue({
+			el: '#app-7',
+			data: {
+				List:[
+					{id:0, text:'蔬菜'},
+					{id:1, text:'奶酪'},
+					{id:2, text:'其它'}
+				]
+			}
+		})
+
+		var vm = new Vue({
+			el: '#example',
+			data: {
+				message: 'Hello'
+			},
+			computed: {
+				reversedMessage: function(){
+					return this.message.split('').reverse().join('')
+				}
+			}
+		})
+
+		var data={counter: 0}
+
+		Vue.component('simple-counter',{
+			template: '<button v-on:click="counter +=1">{{counter}}</button>',
+			data: function(){
+				return {counter:0}
+			}
+		})
+
+		new Vue({
+			el: '#example-2'
+		})
+
+		Vue.component('child',{
+			props: ['myMessage'],
+			template: '<span>{{myMessage}}</span>'
+		})
+
+		new Vue({
+			el: '#example-3'
+		})
+
+		new Vue({
+			el: '#prop-example-2',
+			data: {
+				parentMsg: 'Message from parent'
+			}
+		})
+
+		Vue.component('button-counter',{
+			template: '<button v-on:click="incrementCounter">{{counter}}</button>',
+			data: function(){
+				return{
+					counter:0
+				}
+			},
+			methods: {
+				incrementCounter: function(){
+					this.counter +=1
+					this.$emit('increment')
+				}
+			}
+		})
+
+		new Vue({
+			el: '#counter-event-example',
+			data: {
+				total: 0
+			},
+			methods: {
+				incrementTotal: function(){
+					this.total += 1
+				}
+			}
+		})
+
+		Vue.component('button-message',{
+			template: '<div> <input type="text" v-model="message"/> <button v-on:click="handleSendMessage">Send</button>			</div>',
+			data: function(){
+				return {
+					message: 'test message'
+				}
+			},
+			methods: {
+				handleSendMessage: function(){
+					this.$emit('message', {message: this.message})
+				}
+			}
+		})
+
+		new Vue({
+			el: '#message-event-example',
+			data: {
+				messages:[]
+			},
+			methods: {
+				handleMessage: function(payload){
+					this.messages.push(payload.message)
+				}
+			}
+		})
+	</script>
+</body>
+
+</html>
+
